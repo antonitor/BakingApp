@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Baking App</string>
+    <string name="servings">Servings:</string>
+    <string name="recipe_title">Recipe Title</string>
+    <string name="servings_label_">Servings:</string>
+    <string name="recipe_image">recipe image</string>
+    <string name="extra_recipe_id">recipeId</string>
+    <string name="pepe">pepe</string>
+    <string name="extra_step_id">extra_step_id</string>
+    <string name="two_pane_argument">two_pane_argument</string>
+    <string name="ingredient_list">Ingredient list:</string>
+    <string name="dot">dot</string>
+</resources>
