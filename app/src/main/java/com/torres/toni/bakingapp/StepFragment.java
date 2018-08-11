@@ -17,10 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.torres.toni.bakingapp.pojo.Step;
 import com.torres.toni.bakingapp.utils.ExoPlayerVideoHandler;
 import com.torres.toni.bakingapp.viewmodel.RecipeDetailViewModel;
@@ -70,9 +67,7 @@ public class StepFragment extends Fragment {
         final Observer<Step> stepObserver = new Observer<Step>() {
             @Override
             public void onChanged(@Nullable Step step) {
-                Log.d(LOG_TAG, "IS FUCKIN CHANGED");
                 test.setText(step.getDescription());
-                mRecipeDetailViewModel.setPlayerCurrentPosition(0);
                 if (mRecipeDetailViewModel.getStepSelected().getValue().getVideoURL().equals("")) {
                     mExoPlayerHandler.goToBackground();
                     mPlayerView.setVisibility(View.GONE);

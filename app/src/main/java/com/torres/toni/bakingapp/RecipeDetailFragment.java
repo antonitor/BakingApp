@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,11 +89,14 @@ public class RecipeDetailFragment extends Fragment implements StepListAdapter.St
     public void onStepItemClicked(int stepId) {
         mViewModel.setStepSelected(stepId);
         if (mViewModel.istwoPane()) {
+            mViewModel.setPlayerCurrentPosition(0);
+            mViewModel.setPlayerCurrentWindowIndex(0);
             StepFragment stepFragment = new StepFragment();
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.step_detail_two_pane, stepFragment)
                     .commit();
+
         } else {
             StepFragment stepFragment = new StepFragment();
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
