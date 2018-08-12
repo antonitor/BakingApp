@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.torres.toni.bakingapp.pojo.Step;
 
@@ -19,6 +20,7 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.StepLi
     private List<Step> mStepList;
     private final Context mContext;
     private final StepListClickHandler mClickHandler;
+    private int mSelectedIndex = -1;
 
     public StepListAdapter(List<Step> stepsList, Context context, StepListClickHandler clickHandler) {
         this.mStepList = stepsList;
@@ -38,11 +40,24 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.StepLi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull StepListAdapterViewHolder holder, int position) {
-        Step step = mStepList.get(position);
+    public void onBindViewHolder(@NonNull final StepListAdapterViewHolder holder, final int position) {
+        final Step step = mStepList.get(position);
         holder.stepDescription.setText(step.getShortDescription());
         holder.stepNumber.setText(String.valueOf(step.getId()+1));
-        holder.stepId = step.getId();
+        holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mClickHandler.onStepItemClicked(step.getId());
+                mSelectedIndex = position;
+                notifyDataSetChanged();
+            }
+        });
+        if(mSelectedIndex==position) {
+            holder.linearLayout.setBackgroundResource(R.drawable.round_corner_alt);
+        } else {
+            holder.linearLayout.setBackgroundResource(R.drawable.round_corner_filled);
+        }
+
     }
 
     @Override
@@ -51,21 +66,16 @@ public class StepListAdapter extends RecyclerView.Adapter<StepListAdapter.StepLi
         return mStepList.size();
     }
 
-    class StepListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class StepListAdapterViewHolder extends RecyclerView.ViewHolder{
 
         @BindView(R.id.step_description) TextView stepDescription;
         @BindView(R.id.step_number) TextView stepNumber;
+        @BindView(R.id.step_linear_layout) LinearLayout linearLayout;
         int stepId;
 
         public StepListAdapterViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            mClickHandler.onStepItemClicked(stepId);
         }
     }
 

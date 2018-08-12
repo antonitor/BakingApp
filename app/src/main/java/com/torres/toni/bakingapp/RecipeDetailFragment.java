@@ -43,54 +43,33 @@ public class RecipeDetailFragment extends Fragment implements StepListAdapter.St
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         ButterKnife.bind(this, rootView);
-        stepListAdapter = new StepListAdapter(null, getContext(), this);
+        setUpView();
+        stepListAdapter = new StepListAdapter(mViewModel.getStepList(), getContext(), this);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setNestedScrollingEnabled(false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(stepListAdapter);
         mRecyclerView.setFocusable(false);
         ingredientsTextView.requestFocus();
-        setUpViewModel();
         return rootView;
     }
 
-    private void setUpViewModel() {
+    private void setUpView() {
         mViewModel = ViewModelProviders.of(getActivity()).get(RecipeDetailViewModel.class);
-        final Observer<Recipe> recipeObserver = new Observer<Recipe>() {
-            @Override
-            public void onChanged(@Nullable Recipe recipe) {
-                getActivity().setTitle(recipe.getName());
-            }
-        };
-        final Observer<List<Ingredient>> ingredientListObserver = new Observer<List<Ingredient>>() {
-            @Override
-            public void onChanged(@Nullable List<Ingredient> ingredients) {
-                ingredientsTextView.setText("");
-                for(Ingredient ingredient : ingredients) {
-                    ingredientsTextView.append("· "+ingredient.getIngredient() + " ");
-                    ingredientsTextView.append("( " +((int) ingredient.getQuantity()) + " ");
-                    ingredientsTextView.append(ingredient.getMeasure() + " )");
-                    ingredientsTextView.append("\n");
-                }
-            }
-        };
-        final Observer<List<Step>> stepListObserver = new Observer<List<Step>>() {
-            @Override
-            public void onChanged(@Nullable List<Step> steps) {
-                stepListAdapter.setSteps(steps);
-            }
-        };
-        mViewModel.getRecipe().observe(this, recipeObserver);
-        mViewModel.getIngredientList().observe(this, ingredientListObserver);
-        mViewModel.getStepList().observe(this, stepListObserver);
+        getActivity().setTitle(mViewModel.getRecipe().getName());
+        ingredientsTextView.setText("");
+        for(Ingredient ingredient : mViewModel.getIngredientList()) {
+            ingredientsTextView.append("· "+ingredient.getIngredient() + " ");
+            ingredientsTextView.append("( " +((int) ingredient.getQuantity()) + " ");
+            ingredientsTextView.append(ingredient.getMeasure() + " )");
+            ingredientsTextView.append("\n");
+        }
     }
 
     @Override
     public void onStepItemClicked(int stepId) {
         mViewModel.setStepSelected(stepId);
         if (mViewModel.istwoPane()) {
-            mViewModel.setPlayerCurrentPosition(0);
-            mViewModel.setPlayerCurrentWindowIndex(0);
             StepFragment stepFragment = new StepFragment();
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             fragmentManager.beginTransaction()

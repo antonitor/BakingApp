@@ -32,9 +32,9 @@ import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 public class StepFragment extends Fragment {
 
     public static final String LOG_TAG = StepFragment.class.getSimpleName();
-    RecipeDetailViewModel mRecipeDetailViewModel;
-    @BindView(R.id.test)
-    TextView test;
+    RecipeDetailViewModel mViewModel;
+    @BindView(R.id.description)
+    TextView descriptionTextView;
     @BindView(R.id.nextStep)
     Button nextStepButton;
     @BindView(R.id.previousStep)
@@ -57,62 +57,63 @@ public class StepFragment extends Fragment {
         //**********
         setUpViewModel();
         setUpButtons();
-        initializePlayer();
+        resetPlayer();
         return rootView;
     }
 
 
     private void setUpViewModel() {
-        mRecipeDetailViewModel = ViewModelProviders.of(getActivity()).get(RecipeDetailViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(RecipeDetailViewModel.class);
         final Observer<Step> stepObserver = new Observer<Step>() {
             @Override
             public void onChanged(@Nullable Step step) {
-                test.setText(step.getDescription());
-                if (mRecipeDetailViewModel.getStepSelected().getValue().getVideoURL().equals("")) {
+                Log.d(LOG_TAG, "STEP SELECTED CHANGED ->>>>> " + step.getDescription());
+                descriptionTextView.setText(step.getDescription());
+                if (mViewModel.getStepSelected().getValue().getVideoURL().equals("")) {
                     mExoPlayerHandler.goToBackground();
                     mPlayerView.setVisibility(View.GONE);
                 } else {
                     mPlayerView.setVisibility(View.VISIBLE);
                     mExoPlayerHandler.setPlayerPlaying(true);
                     mExoPlayerHandler.goToForeground();
-                    Uri uri = Uri.parse(mRecipeDetailViewModel.getStepSelected().getValue().getVideoURL());
+                    Uri uri = Uri.parse(mViewModel.getStepSelected().getValue().getVideoURL());
                     mExoPlayerHandler.prepareExoPlayerForSource(getContext(), uri, mPlayerView);
-                    mExoPlayerHandler.seekExoPlayerTo((int) mRecipeDetailViewModel.getPlayerCurrentWindowIndex(),
-                            mRecipeDetailViewModel.getPlayerCurrentPosition());
+                    mExoPlayerHandler.seekExoPlayerTo((int) mViewModel.getPlayerCurrentWindowIndex(),
+                            mViewModel.getPlayerCurrentPosition());
                 }
 
             }
         };
-        mRecipeDetailViewModel.getStepSelected().observe(this, stepObserver);
+        mViewModel.getStepSelected().observe(this, stepObserver);
     }
 
     private void setUpButtons() {
-        if (mRecipeDetailViewModel.istwoPane()) {
+        if (mViewModel.istwoPane()) {
             nextStepButton.setVisibility(View.GONE);
             previousStepButton.setVisibility(View.GONE);
         } else {
             nextStepButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mRecipeDetailViewModel.selectNextStep();
+                    mViewModel.selectNextStep();
                 }
             });
             previousStepButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mRecipeDetailViewModel.selectPreviousStep();
+                    mViewModel.selectPreviousStep();
                 }
             });
         }
     }
 
-    private void initializePlayer() {
-        // mExoPlayerHandler = ExoPlayerVideoHandler.getInstance();
-        if (mRecipeDetailViewModel.getStepSelected().getValue() != null) {
-            Uri uri = Uri.parse(mRecipeDetailViewModel.getStepSelected().getValue().getVideoURL());
+    private void resetPlayer() {
+        mExoPlayerHandler = ExoPlayerVideoHandler.getInstance();
+        if (mViewModel.getStepSelected().getValue() != null && mViewModel.getStepSelected().getValue().getVideoURL() != "") {
+            Uri uri = Uri.parse(mViewModel.getStepSelected().getValue().getVideoURL());
             mExoPlayerHandler.prepareExoPlayerForSource(getContext(), uri, mPlayerView);
-            mExoPlayerHandler.seekExoPlayerTo((int) mRecipeDetailViewModel.getPlayerCurrentWindowIndex(),
-                    mRecipeDetailViewModel.getPlayerCurrentPosition());
+            mExoPlayerHandler.seekExoPlayerTo((int) mViewModel.getPlayerCurrentWindowIndex(),
+                    mViewModel.getPlayerCurrentPosition());
         }
     }
 
@@ -129,23 +130,17 @@ public class StepFragment extends Fragment {
 
 
     @Override
-    public void onDestroyView() {
-        Log.d(LOG_TAG, "DESTROY VIEW");
-        super.onDestroyView();
-        mRecipeDetailViewModel.setPlayerCurrentPosition(mExoPlayerHandler.getPlayer().getCurrentPosition());
-        mRecipeDetailViewModel.setPlayerCurrentWindowIndex(mExoPlayerHandler.getPlayer().getCurrentWindowIndex());
-    }
-
-    @Override
     public void onStop() {
-        Log.d(LOG_TAG, "ON STOP");
         super.onStop();
+        if (getActivity().isChangingConfigurations()) {
+            mViewModel.setPlayerCurrentPosition(mExoPlayerHandler.getPlayer().getCurrentPosition());
+            mViewModel.setPlayerCurrentWindowIndex(mExoPlayerHandler.getPlayer().getCurrentWindowIndex());
+        }
         mExoPlayerHandler.goToBackground();
     }
 
     @Override
     public void onStart() {
-        Log.d(LOG_TAG, "ON START");
         super.onStart();
         mExoPlayerHandler.goToForeground();
     }

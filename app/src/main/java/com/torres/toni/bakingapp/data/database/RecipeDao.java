@@ -29,10 +29,10 @@ public abstract class RecipeDao {
     public abstract LiveData<List<Recipe>> getRecipes();
 
     @Query("SELECT * FROM " + BakingContract.RecipeEntry.TABLE_NAME + " WHERE " + BakingContract.RecipeEntry.COLUMN_ID + " = :id")
-    public abstract LiveData<Recipe> getRecipe(int id);
+    public abstract Recipe getRecipe(int id);
 
     @Query("SELECT * FROM " + BakingContract.IngredientEntry.TABLE_NAME + " WHERE " + BakingContract.IngredientEntry.COLUMN_RECIPE_ID + " = :id")
-    public abstract LiveData<List<Ingredient>> getIngredients(int id);
+    public abstract List<Ingredient> getIngredients(int id);
 
     @Query("SELECT * FROM " + BakingContract.StepEntry.TABLE_NAME + " WHERE " + BakingContract.StepEntry.COLUMN_RECIPE_ID + " = :id")
     public abstract LiveData<List<Step>> getLiveSteps(int id);

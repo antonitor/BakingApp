@@ -17,6 +17,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 public class ExoPlayerVideoHandler {
 
     private static ExoPlayerVideoHandler instance;
+    private static final String LOG_TAG = ExoPlayerVideoHandler.class.getSimpleName();
 
     public static ExoPlayerVideoHandler getInstance() {
         if (instance == null) {
@@ -34,17 +35,11 @@ public class ExoPlayerVideoHandler {
 
     public void prepareExoPlayerForSource(Context context, Uri uri, PlayerView exoPlayerView) {
         if (player == null) {
-            // Create a new player if the player is null or
-            // we want to play a new video
-
-            // Do all the standard ExoPlayer code here...
             player = ExoPlayerFactory.newSimpleInstance(
                     new DefaultRenderersFactory(context),
                     new DefaultTrackSelector(),
                     new DefaultLoadControl());
             player.setPlayWhenReady(true);
-            // Prepare the player with the source.
-
         }
         if (!uri.equals(this.uri)) {
             this.uri = uri;
@@ -78,14 +73,12 @@ public class ExoPlayerVideoHandler {
     public void goToBackground() {
         if (player != null) {
             isPlayerPlaying = player.getPlayWhenReady();
-            Log.d("EXO HANDLER: ", "TO BACK _ is playing = "+isPlayerPlaying);
             player.setPlayWhenReady(false);
         }
     }
 
     public void goToForeground() {
         if (player != null) {
-            Log.d("EXO HANDLER: ", "TO FORE _ is playing = "+isPlayerPlaying);
             player.setPlayWhenReady(isPlayerPlaying);
         }
     }

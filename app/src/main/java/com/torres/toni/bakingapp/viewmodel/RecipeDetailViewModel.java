@@ -14,10 +14,9 @@ import java.util.List;
 public class RecipeDetailViewModel extends ViewModel {
 
     private static final String LOG_TAG = RecipeDetailViewModel.class.getSimpleName();
-    private int recipeId;
-    private LiveData<Recipe> recipe;
-    private LiveData<List<Ingredient>> ingredientList;
-    private LiveData<List<Step>> stepList;
+    private Recipe recipe;
+    private List<Ingredient> ingredientList;
+    private List<Step> stepList;
     private MutableLiveData<Step> stepSelected;
     private boolean twoPane;
     private int selectedStepId;
@@ -25,8 +24,9 @@ public class RecipeDetailViewModel extends ViewModel {
     private long playerCurrentWindowIndex;
 
     public RecipeDetailViewModel(BakingDatabase database, int id) {
-        stepSelected = new MutableLiveData<>();
-        this.recipeId = id;
+        if (this.stepSelected == null) {
+            stepSelected = new MutableLiveData<>();
+        }
         if (this.recipe == null) {
             this.recipe = database.getDao().getRecipe(id);
         }
@@ -34,28 +34,20 @@ public class RecipeDetailViewModel extends ViewModel {
             this.ingredientList = database.getDao().getIngredients(id);
         }
         if (this.stepList == null) {
-            this.stepList = database.getDao().getLiveSteps(id);
+            this.stepList = database.getDao().getSteps(id);
         }
     }
 
-    public LiveData<Recipe> getRecipe() {
+    public Recipe getRecipe() {
         return this.recipe;
     }
 
-    public LiveData<List<Ingredient>> getIngredientList() {
+    public List<Ingredient> getIngredientList() {
         return ingredientList;
     }
 
-    public LiveData<List<Step>> getStepList() {
+    public List<Step> getStepList() {
         return stepList;
-    }
-
-    public int getRecipeId() {
-        return recipeId;
-    }
-
-    public void setRecipeId(int recipeId) {
-        this.recipeId = recipeId;
     }
 
     public LiveData<Step> getStepSelected() {
@@ -63,7 +55,7 @@ public class RecipeDetailViewModel extends ViewModel {
     }
 
     public void setStepSelected(int stepId) {
-        for (Step step : stepList.getValue()) {
+        for (Step step : stepList) {
             if (step.getId() == stepId) {
                 selectedStepId = stepId;
                 stepSelected.setValue(step);
@@ -75,7 +67,7 @@ public class RecipeDetailViewModel extends ViewModel {
     }
 
     public void selectNextStep() {
-        if (selectedStepId < stepList.getValue().size() -1 ) {
+        if (selectedStepId < stepList.size() -1 ) {
             setStepSelected(selectedStepId +1);
         }
     }
