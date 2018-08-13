@@ -1,15 +1,12 @@
 package com.torres.toni.bakingapp;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +21,6 @@ import com.torres.toni.bakingapp.viewmodel.RecipeDetailViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
-import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
 
 public class StepFragment extends Fragment {
@@ -51,16 +45,11 @@ public class StepFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_step, container, false);
         ButterKnife.bind(this, rootView);
-        hideNavigationIfLandscape();
-        //******************
-        mExoPlayerHandler = ExoPlayerVideoHandler.getInstance();
-        //**********
         setUpViewModel();
         setUpButtons();
         resetPlayer();
         return rootView;
     }
-
 
     private void setUpViewModel() {
         mViewModel = ViewModelProviders.of(getActivity()).get(RecipeDetailViewModel.class);
@@ -114,17 +103,6 @@ public class StepFragment extends Fragment {
             mExoPlayerHandler.prepareExoPlayerForSource(getContext(), uri, mPlayerView);
             mExoPlayerHandler.seekExoPlayerTo((int) mViewModel.getPlayerCurrentWindowIndex(),
                     mViewModel.getPlayerCurrentPosition());
-        }
-    }
-
-
-    @SuppressLint("InlinedApi")
-    private void hideNavigationIfLandscape() {
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mPlayerView.setSystemUiVisibility(SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        } else {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().show();
         }
     }
 

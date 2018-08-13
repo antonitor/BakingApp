@@ -1,6 +1,5 @@
 package com.torres.toni.bakingapp;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,18 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.torres.toni.bakingapp.pojo.Ingredient;
-import com.torres.toni.bakingapp.pojo.Recipe;
-import com.torres.toni.bakingapp.pojo.Step;
 import com.torres.toni.bakingapp.viewmodel.RecipeDetailViewModel;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
