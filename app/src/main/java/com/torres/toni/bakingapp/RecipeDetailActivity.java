@@ -3,6 +3,7 @@ package com.torres.toni.bakingapp;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,19 +36,6 @@ public class RecipeDetailActivity extends AppCompatActivity {
                         .add(R.id.step_list_two_pane, recipeDetailFragment)
                         .commit();
             }
-        } else if (findViewById(R.id.fullscreen_video) != null) {
-            mTwoPane = true;
-            setUpViewModel(intent.getIntExtra(getString(R.string.extra_recipe_id), 0));
-            if (mViewModel.getStepSelected()==null) {
-                mViewModel.setStepSelected(0);
-            }
-            if (savedInstanceState == null) {
-                StepFragment stepFragment = new StepFragment();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .add(R.id.fullscreen_video, stepFragment)
-                        .commit();
-            }
         } else {
             mTwoPane = false;
             setUpViewModel(intent.getIntExtra(getString(R.string.extra_recipe_id), 0));
@@ -71,16 +59,23 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     public void onLandscapeHideIU() {
         View decorView = getWindow().getDecorView();
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            getSupportActionBar().hide();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            float dp = Resources.getSystem().getDisplayMetrics().heightPixels / Resources.getSystem().getDisplayMetrics().density;
+            if (dp < 600) {
+                getSupportActionBar().hide();
+                decorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN);
+            }
         } else {
-            getSupportActionBar().show();
+            float dp = Resources.getSystem().getDisplayMetrics().widthPixels / Resources.getSystem().getDisplayMetrics().density;
+            if (dp < 600) {
+                getSupportActionBar().show();
+            }
         }
     }
 
