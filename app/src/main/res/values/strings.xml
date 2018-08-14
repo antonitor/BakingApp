@@ -10,4 +10,10 @@
     <string name="two_pane_argument">two_pane_argument</string>
     <string name="ingredient_list">Ingredient list:</string>
     <string name="dot">dot</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="add_to_widged">ADD TO WIDGED</string>
+    <string name="my_prefs">myPrefs</string>
+    <string name="ingredients">ingredients</string>
+    <string name="title">title</string>
 </resources>
